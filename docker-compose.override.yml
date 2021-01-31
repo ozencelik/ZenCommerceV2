@@ -2,6 +2,7 @@ version: '3.4'
 
 services:
 
+  # DB Info Start
   catalog.db:
     container_name: catalog.db
     restart: always
@@ -10,6 +11,15 @@ services:
     ports:
       - "27017:27017"
 
+  basket.db:
+    container_name: basket.db
+    restart: always
+    ports:
+      - "6379:6379"      
+  # DB Info End
+
+  
+  # Api Info Start
   catalog.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -21,3 +31,16 @@ services:
       - ${HOME}/.aspnet/https:/root/.aspnet/https
     ports:
       - "8000:80"
+
+  basket.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:Redis=basket.db:6379"
+    depends_on:
+      - basket.db
+    volumes:
+      - ${HOME}/.microsoft/usersecrets/:/root/.microsoft/usersecrets
+      - ${HOME}/.aspnet/https:/root/.aspnet/https
+    ports:
+      - "8001:80"      
+  # Api Info End
